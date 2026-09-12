@@ -1,0 +1,28 @@
+﻿@*
+@model List<string>
+@{
+    ViewData["Title"] = "NameList";
+}
+<h2>@ViewData["Title"]</h2>
+@* Kiểm tra nếu danh sách có dữ liệu thì mới hiển thị *@@*
+@if (Model != null && Model.Any())
+{
+    <ul>
+        @foreach (var ten in Model)
+        {
+            <li>@ten</li>
+        }
+    </ul>
+}
+else
+{
+    <p>Không có dữ liệu trong danh sách.</p>
+}*@
+
+@model List<PersonModel>
+<ul>
+    @foreach (var person in Model)
+    {
+        <li>@person.Name - @person.Age tuổi</li>
+    }
+</ul>
