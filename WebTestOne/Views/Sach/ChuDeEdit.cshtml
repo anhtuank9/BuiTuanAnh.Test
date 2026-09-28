@@ -1,0 +1,32 @@
+﻿@model WebTestOne.Models.ChuDe
+
+@{
+    @* Khối C# xử lý logic giao diện (kiểm tra Mcd để xác định là đang Sửa hay Thêm mới) *@
+    bool isEdit = Model != null && Model.Mcd > 0;
+    ViewData["Title"] = isEdit ? "Chỉnh sửa chủ đề" : "Thêm mới chủ đề";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@* Form gửi dữ liệu (POST) lên Action ChuDeEdit trong SachController *@
+<form asp-action="ChuDeEdit" method="post">
+
+    @* Trường input ẩn giữ lại Mã Chủ Đề để Controller biết đang cập nhật bản ghi nào *@
+    <input type="hidden" asp-for="Mcd" />
+
+    <div class="form-group mb-3">
+        <label asp-for="TenChuDe" class="form-label">Tên chủ đề</label>
+        <input asp-for="TenChuDe" class="form-control" />
+
+        @* Thẻ span này dùng để in ra câu cảnh báo màu đỏ ("Đã có chủ đề này...") từ Controller *@
+        <span asp-validation-for="TenChuDe" class="text-danger"></span>
+    </div>
+
+    @* Nút submit tự động thay đổi nhãn tùy theo trạng thái thao tác *@
+    <button type="submit" class="btn btn-primary">
+        @(isEdit ? "Cập nhật" : "Tạo mới")
+    </button>
+
+    @* Nút hủy thao tác và quay về trang danh sách *@
+    <a asp-action="ChuDe" class="btn btn-secondary">Quay lại</a>
+</form>

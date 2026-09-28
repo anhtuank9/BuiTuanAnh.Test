@@ -1,0 +1,67 @@
+﻿@using WebTestOne.Models
+@model List<ChuDe>
+
+@{
+    ViewData["Title"] = "Chủ đề sách";
+}
+
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+    th, td {
+        border: 1px solid #dee2e6;
+        padding: 10px;
+        text-align: center;
+    }
+    th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+    }
+</style>
+
+<h2>@ViewData["Title"]</h2>
+
+@* 1. Nút Thêm chủ đề mới (truyền id = 0) *@
+<a asp-action="ChuDeEdit" asp-route-id="0" class="btn btn-primary mb-3">Thêm chủ đề</a>
+
+@if (Model != null && Model.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 15%;">MCD</th>
+                <th style="width: 60%;">Tên chủ đề</th>
+                <th style="width: 25%;">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (ChuDe cd in Model)
+            {
+                <tr>
+                    <td>@cd.Mcd</td>
+                    <td style="text-align: left; padding-left: 20px;">@cd.TenChuDe</td>
+                    <td>
+                        @* 2. Nút Sửa chủ đề *@
+                        <a asp-action="ChuDeEdit" asp-route-id="@cd.Mcd" class="btn btn-warning btn-sm">Sửa</a>
+
+                        @* 3. Form Xóa chủ đề kèm hộp thoại Javascript xác nhận *@
+                        <form asp-action="ChuDeDelete" asp-route-id="@cd.Mcd" method="post" style="display:inline;">
+                            <button type="submit" 
+                                    class="btn btn-sm btn-danger" 
+                                    onclick="return confirm('Chủ đề cần xóa phải không có cuốn sách nào. Bạn có chắc chắn muốn xóa chủ đề này không?');">
+                                Xóa
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-muted">Không có dữ liệu chủ đề nào.</p>
+}
