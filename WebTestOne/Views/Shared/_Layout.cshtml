@@ -19,6 +19,8 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    
+                    @* Khu vực menu bên trái *@
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
@@ -35,11 +37,53 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Sach" asp-action="ChuDe">Chủ đề</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Sach" asp-action="QueryDemo">Query Demo</a>
+                        </li>
+                        
+                        @* Nút Quản trị chỉ xuất hiện khi người dùng đăng nhập bằng tài khoản có quyền Admin *@
+                        @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-danger fw-bold border border-danger rounded px-2 ms-2" asp-area="" asp-controller="Admin" asp-action="Index">Quản trị</a>
+                            </li>
+                        }
                     </ul>
+
+                    @* Khu vực User Login / Logout nằm góc phải Navbar *@
+                    <ul class="navbar-nav">
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item d-flex align-items-center me-3 border border-warning rounded px-2 bg-light">
+                                <span class="text-dark">Xin chào, <b>@User.Identity.Name</b></span>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <span class="badge bg-secondary ms-2">Admin</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-info ms-2 text-dark">User</span>
+                                }
+                            </li>
+                            <li class="nav-item d-flex align-items-center">
+                                <form asp-controller="Account" asp-action="Logout" method="post" class="form-inline m-0">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">Đăng xuất</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="btn btn-outline-primary" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+                            </li>
+                        }
+                    </ul>
+
                 </div>
             </div>
         </nav>
     </header>
+    
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -51,6 +95,7 @@
             &copy; 2026 - WebTestOne - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+    
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

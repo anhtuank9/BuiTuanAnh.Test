@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using WebTestOne.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebTestOne.Controllers
 {
@@ -11,6 +12,8 @@ namespace WebTestOne.Controllers
             return View();
         }
 
+        // Bổ sung [Authorize] để yêu cầu đăng nhập khi vào trang Privacy
+        [Authorize]
         public IActionResult Privacy()
         {
             return View();
@@ -35,12 +38,12 @@ namespace WebTestOne.Controllers
         {
             // Tạo danh sách đối tượng chứa cả Name và Age
             List<PersonModel> danhSachNguoiDung = new List<PersonModel>
-    {
-        new PersonModel { Name = "Nguyễn Văn A", Age = 25 },
-        new PersonModel { Name = "Trần Thị B", Age = 30 },
-        new PersonModel { Name = "Lê Văn C", Age = 22 },
-        new PersonModel { Name = "Phạm Thị D", Age = 28 }
-    };
+            {
+                new PersonModel { Name = "Nguyễn Văn A", Age = 25 },
+                new PersonModel { Name = "Trần Thị B", Age = 30 },
+                new PersonModel { Name = "Lê Văn C", Age = 22 },
+                new PersonModel { Name = "Phạm Thị D", Age = 28 }
+            };
             // Truyền danh sách Model sang View
             return View(danhSachNguoiDung);
         }

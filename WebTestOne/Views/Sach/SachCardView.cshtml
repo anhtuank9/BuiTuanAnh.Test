@@ -1,0 +1,42 @@
+﻿@using WebTestOne.Models
+@model List<SachViewModel>
+
+@{
+    ViewData["Title"] = "Danh mục sách";
+}
+
+@* Liên kết tới file CSS riêng cho giao diện dạng lưới *@
+<link rel="stylesheet" href="~/css/product.css" />
+
+<div class="container mt-4">
+    <h2 class="mb-4">@ViewData["Title"]</h2>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="product-grid">
+            @foreach (SachViewModel s in Model)
+            {
+                <div class="product-card">
+                    <div class="product-image">
+                        @* Điều chỉnh phần đuôi .jpg cho phù hợp với dữ liệu thật của bạn *@
+                        <img src="@($"/images/{s.HinhMinhHoa}.jpg")" alt="@s.TenSach" />
+                    </div>
+
+                    <div class="product-info">
+                        <h3><b>@s.TenSach</b></h3>
+                        <p class="nxb-name">@s.TenNXB</p>
+
+                        @* Định dạng tiền tệ VNĐ *@
+                        <p class="price">@((s.DonGia ?? 0).ToString("#,##0 VNĐ"))</p>
+
+                        <button class="buy-btn">Mua Ngay</button>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>Không có sản phẩm nào để hiển thị.</p>
+    }
+</div>

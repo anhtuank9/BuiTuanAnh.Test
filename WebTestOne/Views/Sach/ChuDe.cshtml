@@ -24,7 +24,14 @@
 
 <h2>@ViewData["Title"]</h2>
 
-@* 1. Nút Thêm chủ đề mới (truyền id = 0) *@
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+        <strong>Thành công!</strong> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 <a asp-action="ChuDeEdit" asp-route-id="0" class="btn btn-primary mb-3">Thêm chủ đề</a>
 
 @if (Model != null && Model.Any())
@@ -44,10 +51,7 @@
                     <td>@cd.Mcd</td>
                     <td style="text-align: left; padding-left: 20px;">@cd.TenChuDe</td>
                     <td>
-                        @* 2. Nút Sửa chủ đề *@
                         <a asp-action="ChuDeEdit" asp-route-id="@cd.Mcd" class="btn btn-warning btn-sm">Sửa</a>
-
-                        @* 3. Form Xóa chủ đề kèm hộp thoại Javascript xác nhận *@
                         <form asp-action="ChuDeDelete" asp-route-id="@cd.Mcd" method="post" style="display:inline;">
                             <button type="submit" 
                                     class="btn btn-sm btn-danger" 
