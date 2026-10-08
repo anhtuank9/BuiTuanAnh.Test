@@ -1,42 +1,54 @@
-﻿@using WebTestOne.Models
+@using WebTestOne.Models
 @model List<SachViewModel>
 
 @{
     ViewData["Title"] = "Danh mục sách";
 }
 
-@* Liên kết tới file CSS riêng cho giao diện dạng lưới *@
-<link rel="stylesheet" href="~/css/product.css" />
-
-<div class="container mt-4">
-    <h2 class="mb-4">@ViewData["Title"]</h2>
+<section class="catalog-section">
+    <header class="section-heading">
+        <div>
+            <span class="eyebrow">Danh mục</span>
+            <h1>@ViewBag.PageHeading</h1>
+        </div>
+        <span class="result-count">@Model.Count đầu sách</span>
+    </header>
 
     @if (Model != null && Model.Any())
     {
-        <div class="product-grid">
+        <div class="book-grid">
             @foreach (SachViewModel s in Model)
             {
-                <div class="product-card">
-                    <div class="product-image">
-                        @* Điều chỉnh phần đuôi .jpg cho phù hợp với dữ liệu thật của bạn *@
-                        <img src="@($"/images/{s.HinhMinhHoa}.jpg")" alt="@s.TenSach" />
+                <article class="book-card">
+                    <a class="book-cover" asp-action="Details" asp-route-id="@s.Ms">
+                        <img src="@s.ImageUrl" alt="Bìa sách @s.TenSach" onerror="this.src='/images/new.jpg'" />
+                    </a>
+                    <div class="book-info">
+                        <span class="book-topic">@(s.TenChuDe ?? "Sách chọn lọc")</span>
+                        <h2><a asp-action="Details" asp-route-id="@s.Ms">@s.TenSach</a></h2>
+                        <p class="book-author">@(string.IsNullOrWhiteSpace(s.TacGia) ? "Tác giả đang cập nhật" : s.TacGia)</p>
+                        <p class="book-publisher">@(s.TenNXB ?? "Nhà xuất bản đang cập nhật")</p>
+                        <p class="book-description">@s.MoTa</p>
+                        <div class="book-purchase">
+                            <strong>@((s.DonGia ?? 0).ToString("#,##0 'đ'"))</strong>
+                            <form asp-controller="Cart" asp-action="Add" method="post">
+                                <input type="hidden" name="id" value="@s.Ms" />
+                                <input type="hidden" name="returnUrl" value="@(Context.Request.Path + Context.Request.QueryString)" />
+                                <button type="submit">Chọn mua</button>
+                            </form>
+                        </div>
                     </div>
-
-                    <div class="product-info">
-                        <h3><b>@s.TenSach</b></h3>
-                        <p class="nxb-name">@s.TenNXB</p>
-
-                        @* Định dạng tiền tệ VNĐ *@
-                        <p class="price">@((s.DonGia ?? 0).ToString("#,##0 VNĐ"))</p>
-
-                        <button class="buy-btn">Mua Ngay</button>
-                    </div>
-                </div>
+                </article>
             }
         </div>
     }
     else
     {
-        <p>Không có sản phẩm nào để hiển thị.</p>
+        <div class="empty-state">
+            <span aria-hidden="true">📚</span>
+            <h2>Chưa có sách trong chủ đề này</h2>
+            <p>Bạn có thể chọn một chủ đề khác hoặc xem toàn bộ danh mục.</p>
+            <a class="primary-action" asp-action="Index">Xem tất cả sách</a>
+        </div>
     }
-</div>
+</section>

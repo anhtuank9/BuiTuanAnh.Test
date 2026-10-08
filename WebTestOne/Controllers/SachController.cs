@@ -3,12 +3,18 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebTestOne.Models;
 using System.Data;
+using WebTestOne.Services;
 
 namespace WebTestOne.Controllers
 {
     public class SachController : Controller
     {
-        private readonly AppDbContext _context = new AppDbContext();
+        private readonly AppDbContext _context;
+
+        public SachController(AppDbContext context)
+        {
+            _context = context;
+        }
 
         public ActionResult ChuDe()
         {
@@ -73,22 +79,69 @@ namespace WebTestOne.Controllers
             return RedirectToAction(nameof(ChuDe));
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? chuDeId)
         {
-            var query = from s in _context.Saches
-                        join nxb in _context.NhaXuatBans on s.Mnxb equals nxb.Mnxb
-                        select new SachViewModel
-                        {
-                            Ms = s.Ms,
-                            TenSach = s.TenSach,
-                            DonGia = s.DonGia,
-                            HinhMinhHoa = s.HinhMinhHoa,
-                            MoTa = s.MoTa,
-                            TenNXB = nxb.TenNhaXuatBan
-                        };
+            var query = _context.Saches
+                .AsNoTracking()
+                .Include(s => s.MnxbNavigation)
+                .Include(s => s.McdNavigation)
+                .Include(s => s.ThamGia)
+                    .ThenInclude(tg => tg.MtgNavigation)
+                .AsQueryable();
 
-            var resultList = await query.ToListAsync();
+            if (chuDeId.HasValue)
+            {
+                query = query.Where(s => s.Mcd == chuDeId.Value);
+            }
+
+            var books = await query.OrderByDescending(s => s.NgayCapNhat).ToListAsync();
+            var resultList = books.Select(s => new SachViewModel
+            {
+                Ms = s.Ms,
+                TenSach = s.TenSach,
+                DonGia = s.DonGia,
+                HinhMinhHoa = s.HinhMinhHoa,
+                MoTa = s.MoTa,
+                TenNXB = s.MnxbNavigation?.TenNhaXuatBan,
+                TenChuDe = s.McdNavigation?.TenChuDe,
+                TacGia = string.Join(", ", s.ThamGia.Select(tg => tg.MtgNavigation.TenTacGia)),
+                ImageUrl = StoreImage.Book(s.HinhMinhHoa)
+            }).ToList();
+
+            ViewBag.SelectedTopicId = chuDeId;
+            ViewBag.PageHeading = chuDeId.HasValue
+                ? await _context.ChuDes.Where(cd => cd.Mcd == chuDeId.Value).Select(cd => cd.TenChuDe).FirstOrDefaultAsync()
+                    ?? "Danh mục sách"
+                : "Tất cả sách";
+
             return View("SachCardView", resultList);
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var book = await _context.Saches
+                .Include(s => s.MnxbNavigation)
+                .Include(s => s.McdNavigation)
+                .Include(s => s.ThamGia)
+                    .ThenInclude(tg => tg.MtgNavigation)
+                .FirstOrDefaultAsync(s => s.Ms == id);
+
+            if (book is null)
+            {
+                return NotFound();
+            }
+
+            book.SoLanXem = (book.SoLanXem ?? 0) + 1;
+            await _context.SaveChangesAsync();
+
+            return View(new BookDetailViewModel
+            {
+                Sach = book,
+                NhaXuatBan = book.MnxbNavigation?.TenNhaXuatBan ?? "Đang cập nhật",
+                ChuDe = book.McdNavigation?.TenChuDe ?? "Đang cập nhật",
+                TacGia = string.Join(", ", book.ThamGia.Select(tg => tg.MtgNavigation.TenTacGia)),
+                ImageUrl = StoreImage.Book(book.HinhMinhHoa)
+            });
         }
 
         private List<Dictionary<string, object>> ExecuteRawSql(string sqlQuery)

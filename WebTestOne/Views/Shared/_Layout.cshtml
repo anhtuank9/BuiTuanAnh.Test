@@ -1,101 +1,92 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - WebTestOne</title>
-    <script type="importmap"></script>
+    <meta name="theme-color" content="#0194f3" />
+    <title>@ViewData["Title"] - Book Online</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WebTestOne.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WebTestOne</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    
-                    @* Khu vực menu bên trái *@
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="NameList">NameList</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Sach" asp-action="Index">Sách</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Sach" asp-action="ChuDe">Chủ đề</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Sach" asp-action="QueryDemo">Query Demo</a>
-                        </li>
-                        
-                        @* Nút Quản trị chỉ xuất hiện khi người dùng đăng nhập bằng tài khoản có quyền Admin *@
-                        @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-danger fw-bold border border-danger rounded px-2 ms-2" asp-area="" asp-controller="Admin" asp-action="Index">Quản trị</a>
-                            </li>
-                        }
-                    </ul>
+    <div class="site-shell">
+        <header class="site-header">
+            <a class="brand-banner" asp-controller="Home" asp-action="Index" aria-label="Book Online - Trang chủ">
+                <img src="~/images/nen_banner.jpg" alt="Book Online" />
+            </a>
+            <div class="banner-message">
+                <span class="eyebrow">Thư viện trực tuyến</span>
+                <strong>Mỗi trang sách, một chân trời mới</strong>
+                <span>Chọn sách hay · Giao nhanh · Mua sắm thuận tiện</span>
+            </div>
+        </header>
 
-                    @* Khu vực User Login / Logout nằm góc phải Navbar *@
-                    <ul class="navbar-nav">
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            <li class="nav-item d-flex align-items-center me-3 border border-warning rounded px-2 bg-light">
-                                <span class="text-dark">Xin chào, <b>@User.Identity.Name</b></span>
-                                @if (User.IsInRole("Admin"))
-                                {
-                                    <span class="badge bg-secondary ms-2">Admin</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-info ms-2 text-dark">User</span>
-                                }
-                            </li>
-                            <li class="nav-item d-flex align-items-center">
-                                <form asp-controller="Account" asp-action="Logout" method="post" class="form-inline m-0">
-                                    <button type="submit" class="btn btn-outline-danger btn-sm">Đăng xuất</button>
-                                </form>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="btn btn-outline-primary" asp-controller="Account" asp-action="Login">Đăng nhập</a>
-                            </li>
-                        }
-                    </ul>
-
+        <nav class="top-nav" aria-label="Điều hướng chính">
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" data-site-nav-toggle>
+                <span aria-hidden="true">☰</span> Danh mục
+            </button>
+            <div class="top-nav-inner" id="primary-nav" data-site-nav>
+                <div class="nav-links">
+                    <a asp-controller="Home" asp-action="Index">Trang chủ</a>
+                    <a asp-controller="Sach" asp-action="Index">Danh mục sách</a>
+                    <a asp-controller="Account" asp-action="Register">Đăng ký</a>
+                    <a asp-controller="Cart" asp-action="Index">Giỏ hàng</a>
+                    @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Admin"))
+                    {
+                        <a asp-controller="Sach" asp-action="ChuDe">Quản lý chủ đề</a>
+                        <a asp-controller="Sach" asp-action="QueryDemo">Truy vấn CSDL</a>
+                    }
+                </div>
+                <div class="account-links">
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <span>Xin chào, <strong>@User.Identity.Name</strong></span>
+                        <form asp-controller="Account" asp-action="Logout" method="post">
+                            <button type="submit">Đăng xuất</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a asp-controller="Account" asp-action="Login">Đăng nhập</a>
+                    }
                 </div>
             </div>
         </nav>
-    </header>
-    
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+        <div class="store-grid">
+            <aside class="left-sidebar">
+                @await Component.InvokeAsync("BookTopics")
+            </aside>
+
+            <main class="store-main" role="main">
+                @await Component.InvokeAsync("NewBooks")
+                @await Component.InvokeAsync("RandomAds")
+
+                @if (TempData["CartMessage"] is string cartMessage)
+                {
+                    <div class="notice notice-success" role="status">@cartMessage</div>
+                }
+
+                <div class="main-surface">
+                    @RenderBody()
+                </div>
+            </main>
+
+            <aside class="right-sidebar">
+                @await Component.InvokeAsync("CartSummary")
+                @await Component.InvokeAsync("ActiveAds")
+                @await Component.InvokeAsync("BestSellers")
+            </aside>
+        </div>
+
+        <footer class="site-footer">
+            <strong>Book Online</strong>
+            <span>© 2026 · 189 Nguyễn Lương Bằng, Đà Nẵng · Điện thoại: 0236 3 888 999</span>
+            <span>Hỗ trợ: bookonline@viu.edu.vn</span>
+        </footer>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - WebTestOne - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

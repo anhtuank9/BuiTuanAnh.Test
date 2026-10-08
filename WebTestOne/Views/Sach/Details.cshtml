@@ -1,0 +1,49 @@
+@model BookDetailViewModel
+
+@{
+    ViewData["Title"] = Model.Sach.TenSach;
+}
+
+<article class="book-detail">
+    <div class="detail-cover">
+        <img src="@Model.ImageUrl" alt="Bìa sách @Model.Sach.TenSach" onerror="this.src='/images/new.jpg'" />
+    </div>
+    <div class="detail-content">
+        <span class="eyebrow">@Model.ChuDe</span>
+        <h1>@Model.Sach.TenSach</h1>
+        <dl class="book-facts">
+            <div>
+                <dt>Tác giả</dt>
+                <dd>@(string.IsNullOrWhiteSpace(Model.TacGia) ? "Đang cập nhật" : Model.TacGia)</dd>
+            </div>
+            <div>
+                <dt>Nhà xuất bản</dt>
+                <dd>@Model.NhaXuatBan</dd>
+            </div>
+            <div>
+                <dt>Đơn vị</dt>
+                <dd>@(Model.Sach.DonViTinh ?? "Cuốn")</dd>
+            </div>
+            <div>
+                <dt>Lượt xem</dt>
+                <dd>@Model.Sach.SoLanXem</dd>
+            </div>
+        </dl>
+        <div class="detail-description">
+            <h2>Giới thiệu sách</h2>
+            <p>@(string.IsNullOrWhiteSpace(Model.Sach.MoTa) ? "Nội dung giới thiệu đang được cập nhật." : Model.Sach.MoTa)</p>
+        </div>
+        <div class="detail-purchase">
+            <div>
+                <span>Giá bán</span>
+                <strong>@((Model.Sach.DonGia ?? 0).ToString("#,##0 'đ'"))</strong>
+            </div>
+            <form asp-controller="Cart" asp-action="Add" method="post">
+                <input type="hidden" name="id" value="@Model.Sach.Ms" />
+                <input type="hidden" name="returnUrl" value="@(Context.Request.Path + Context.Request.QueryString)" />
+                <button type="submit" class="primary-action">Thêm vào giỏ hàng</button>
+            </form>
+        </div>
+        <a class="back-link" asp-action="Index" asp-route-chuDeId="@Model.Sach.Mcd">← Quay lại danh mục</a>
+    </div>
+</article>

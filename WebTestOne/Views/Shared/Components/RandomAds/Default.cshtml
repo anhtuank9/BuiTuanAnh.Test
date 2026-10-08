@@ -1,0 +1,35 @@
+@model IReadOnlyList<AdvertisementViewModel>
+
+<section class="promo-zone" aria-label="Banner quảng cáo">
+    @if (Model.Count > 0)
+    {
+        <div class="promo-carousel" data-ad-carousel data-interval="4500">
+            @for (var index = 0; index < Model.Count; index++)
+            {
+                var ad = Model[index];
+                <a class="promo-slide @(index == 0 ? "is-active" : null)"
+                   href="@ad.Link"
+                   target="_blank"
+                   rel="noopener"
+                   title="@ad.CompanyName"
+                   data-ad-slide
+                   aria-hidden="@(index == 0 ? "false" : "true")">
+                    <img src="@ad.ImageUrl" alt="Quảng cáo @ad.CompanyName" />
+                </a>
+            }
+            @if (Model.Count > 1)
+            {
+                <div class="promo-dots" aria-hidden="true">
+                    @for (var index = 0; index < Model.Count; index++)
+                    {
+                        <span class="@(index == 0 ? "is-active" : null)" data-ad-dot></span>
+                    }
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="empty-note">Chưa có banner quảng cáo còn hiệu lực.</p>
+    }
+</section>

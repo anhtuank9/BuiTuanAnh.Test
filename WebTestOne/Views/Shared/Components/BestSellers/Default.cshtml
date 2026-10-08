@@ -1,0 +1,25 @@
+@model IReadOnlyList<SidebarBookViewModel>
+
+<section class="sidebar-card best-sellers" aria-labelledby="best-sellers-heading">
+    <h2 id="best-sellers-heading">Sách bán chạy</h2>
+    <p class="sidebar-card-subtitle">Theo tổng số lượng trong chi tiết đơn hàng</p>
+    <ol>
+        @foreach (var book in Model)
+        {
+            <li>
+                <a asp-controller="Sach" asp-action="Details" asp-route-id="@book.Id">
+                    <img src="@book.ImageUrl" alt="" onerror="this.src='/images/new.jpg'" />
+                    <span>
+                        <strong>@book.Name</strong>
+                        <small class="sales-count">Đã đặt: @book.SoldQuantity cuốn</small>
+                        <small>@book.Price.ToString("#,##0 'đ'")</small>
+                    </span>
+                </a>
+            </li>
+        }
+    </ol>
+    @if (Model.Count == 0)
+    {
+        <p class="empty-note">Chưa có dữ liệu bán hàng.</p>
+    }
+</section>

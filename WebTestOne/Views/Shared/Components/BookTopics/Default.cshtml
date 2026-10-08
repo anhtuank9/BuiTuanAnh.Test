@@ -1,0 +1,19 @@
+@model IReadOnlyList<TopicMenuItemViewModel>
+
+<section class="sidebar-card topics-card" aria-labelledby="topics-heading">
+    <h2 id="topics-heading">Chủ đề sách</h2>
+    <a class="topic-link topic-link-all" asp-controller="Sach" asp-action="Index">
+        <span>Tất cả sách</span>
+    </a>
+    @foreach (var topic in Model)
+    {
+        <a class="topic-link" asp-controller="Sach" asp-action="Index" asp-route-chuDeId="@topic.Id">
+            <span>@topic.Name</span>
+            <small>@topic.BookCount</small>
+        </a>
+    }
+    @if (Model.Count == 0)
+    {
+        <p class="empty-note">Chưa có chủ đề.</p>
+    }
+</section>

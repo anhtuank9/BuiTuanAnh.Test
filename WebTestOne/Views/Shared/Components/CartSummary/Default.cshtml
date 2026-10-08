@@ -1,0 +1,9 @@
+@model CartViewModel
+
+<a class="cart-summary" asp-controller="Cart" asp-action="Index" aria-label="Xem giỏ hàng">
+    <span class="cart-summary-icon" aria-hidden="true">🛒</span>
+    <span>
+        <strong>Giỏ hàng</strong>
+        <small>@Model.TotalQuantity cuốn · @Model.GrandTotal.ToString("#,##0 'đ'")</small>
+    </span>
+</a>

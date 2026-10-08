@@ -14,5 +14,11 @@
 
         // Thuộc tính bổ sung để lấy tên Nhà xuất bản từ bảng kết nối
         public string? TenNXB { get; set; }
+
+        public string? TenChuDe { get; set; }
+
+        public string? TacGia { get; set; }
+
+        public string ImageUrl { get; set; } = "/images/new.jpg";
     }
 }

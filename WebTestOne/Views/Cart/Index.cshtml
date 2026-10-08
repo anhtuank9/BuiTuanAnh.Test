@@ -1,0 +1,103 @@
+@model CartViewModel
+
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+<section class="cart-page">
+    <header class="section-heading">
+        <div>
+            <span class="eyebrow">Đơn hàng của bạn</span>
+            <h1>Giỏ hàng</h1>
+        </div>
+        <span class="result-count">@Model.TotalQuantity cuốn</span>
+    </header>
+
+    @if (TempData["OrderSuccess"] is string orderSuccess)
+    {
+        <div class="notice notice-success" role="status">@orderSuccess</div>
+    }
+    @if (TempData["CartError"] is string cartError)
+    {
+        <div class="notice notice-error" role="alert">@cartError</div>
+    }
+
+    @if (Model.Items.Count > 0)
+    {
+        <div class="cart-table-wrap">
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>Sách</th>
+                        <th>Đơn giá</th>
+                        <th>Số lượng</th>
+                        <th>Thành tiền</th>
+                        <th><span class="visually-hidden">Thao tác</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>
+                                <a class="cart-book" asp-controller="Sach" asp-action="Details" asp-route-id="@item.BookId">
+                                    <img src="@item.ImageUrl" alt="" onerror="this.src='/images/new.jpg'" />
+                                    <strong>@item.Name</strong>
+                                </a>
+                            </td>
+                            <td>@item.UnitPrice.ToString("#,##0 'đ'")</td>
+                            <td>
+                                <div class="quantity-control">
+                                    <form asp-action="ChangeQuantity" method="post">
+                                        <input type="hidden" name="id" value="@item.BookId" />
+                                        <input type="hidden" name="delta" value="-1" />
+                                        <button type="submit" aria-label="Giảm số lượng @item.Name">−</button>
+                                    </form>
+                                    <strong>@item.Quantity</strong>
+                                    <form asp-action="ChangeQuantity" method="post">
+                                        <input type="hidden" name="id" value="@item.BookId" />
+                                        <input type="hidden" name="delta" value="1" />
+                                        <button type="submit" aria-label="Tăng số lượng @item.Name">+</button>
+                                    </form>
+                                </div>
+                            </td>
+                            <td><strong>@item.LineTotal.ToString("#,##0 'đ'")</strong></td>
+                            <td>
+                                <form asp-action="Remove" method="post">
+                                    <input type="hidden" name="id" value="@item.BookId" />
+                                    <button class="remove-button" type="submit" aria-label="Xóa @item.Name">Xóa</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="cart-summary-box">
+            <div>
+                <span>Tổng cộng</span>
+                <strong>@Model.GrandTotal.ToString("#,##0 'đ'")</strong>
+                <small>Đã bao gồm giá của @Model.TotalQuantity cuốn sách</small>
+                @if (User.Identity?.IsAuthenticated != true)
+                {
+                    <small class="cart-auth-note">Giỏ hàng tạm vẫn được lưu. Bạn chỉ cần đăng nhập khi đặt hàng.</small>
+                }
+            </div>
+            <form asp-action="Checkout" method="post">
+                <button type="submit" class="primary-action">
+                    @(User.Identity?.IsAuthenticated == true ? "Đặt hàng" : "Đăng nhập để đặt hàng")
+                </button>
+            </form>
+        </div>
+    }
+    else if (TempData["OrderSuccess"] is null)
+    {
+        <div class="empty-state">
+            <span aria-hidden="true">🛒</span>
+            <h2>Giỏ hàng đang trống</h2>
+            <p>Hãy chọn một cuốn sách phù hợp để bắt đầu đơn hàng.</p>
+            <a class="primary-action" asp-controller="Sach" asp-action="Index">Tiếp tục mua sách</a>
+        </div>
+    }
+</section>

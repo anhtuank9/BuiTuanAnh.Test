@@ -1,11 +1,38 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
+using WebTestOne.Models;
+using WebTestOne.Services;
+
 public class Program
 {
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
         builder.Services.AddControllersWithViews();
+        builder.Services.AddDbContext<AppDbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("QLBanSach")));
+        builder.Services.AddDistributedMemoryCache();
+        builder.Services.AddSession(options =>
+        {
+            options.Cookie.Name = ".BookOnline.Cart";
+            options.Cookie.HttpOnly = true;
+            options.Cookie.IsEssential = true;
+            options.IdleTimeout = TimeSpan.FromHours(2);
+        });
+        builder.Services.AddHttpContextAccessor();
+        builder.Services.AddScoped<CartService>();
+        builder.Services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
+        builder.Services.Configure<RequestLocalizationOptions>(options =>
+        {
+            var vietnameseCulture = CultureInfo.GetCultureInfo("vi-VN");
+            options.DefaultRequestCulture = new RequestCulture(vietnameseCulture);
+            options.SupportedCultures = [vietnameseCulture];
+            options.SupportedUICultures = [vietnameseCulture];
+        });
 
         // --- BẮT ĐẦU CẤU HÌNH AUTHENTICATION BẰNG COOKIE ---
         builder.Services.AddAuthentication("MyCookieAuth")
@@ -24,6 +51,27 @@ public class Program
 
         var app = builder.Build();
 
+        app.Use(async (context, next) =>
+        {
+            context.Response.OnStarting(() =>
+            {
+                var contentType = context.Response.ContentType;
+                var isTextResponse = contentType?.StartsWith("text/", StringComparison.OrdinalIgnoreCase) == true
+                    || contentType?.StartsWith("application/json", StringComparison.OrdinalIgnoreCase) == true;
+
+                if (isTextResponse
+                    && contentType is not null
+                    && !contentType.Contains("charset=", StringComparison.OrdinalIgnoreCase))
+                {
+                    context.Response.ContentType = $"{contentType}; charset=utf-8";
+                }
+
+                return Task.CompletedTask;
+            });
+
+            await next();
+        });
+
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
         {
@@ -31,12 +79,12 @@ public class Program
             app.UseHsts();
         }
 
-        // QUAN TRỌNG: Lệnh này giúp web đọc được file CSS, JS, Hình ảnh trong thư mục wwwroot
         app.UseStaticFiles();
 
+        app.UseRequestLocalization();
         app.UseRouting();
 
-        // Bật Middleware Xác nhận danh tính (Bắt buộc phải đứng trước UseAuthorization)
+        app.UseSession();
         app.UseAuthentication();
         app.UseAuthorization();
 

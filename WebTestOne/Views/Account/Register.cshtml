@@ -1,0 +1,75 @@
+@model RegisterViewModel
+
+@{
+    ViewData["Title"] = "Đăng ký";
+}
+
+<section class="account-page">
+    <div class="account-panel account-panel-wide">
+        <div class="account-intro">
+            <span class="eyebrow">Thành viên mới</span>
+            <h1>Tạo tài khoản Book Online</h1>
+            <p>Thông tin của bạn được dùng để xác nhận và theo dõi đơn hàng.</p>
+        </div>
+
+        <form asp-action="Register" method="post" class="register-form">
+            <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-grid">
+                <div class="form-group form-span-2">
+                    <label asp-for="HoTen" class="form-label"></label>
+                    <input asp-for="HoTen" class="form-control" autocomplete="name" />
+                    <span asp-validation-for="HoTen" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="TenDangNhap" class="form-label"></label>
+                    <input asp-for="TenDangNhap" class="form-control" autocomplete="username" />
+                    <span asp-validation-for="TenDangNhap" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" autocomplete="email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="MatKhau" class="form-label"></label>
+                    <input asp-for="MatKhau" class="form-control" autocomplete="new-password" />
+                    <span asp-validation-for="MatKhau" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="XacNhanMatKhau" class="form-label"></label>
+                    <input asp-for="XacNhanMatKhau" class="form-control" autocomplete="new-password" />
+                    <span asp-validation-for="XacNhanMatKhau" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DienThoai" class="form-label"></label>
+                    <input asp-for="DienThoai" class="form-control" autocomplete="tel" />
+                    <span asp-validation-for="DienThoai" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NgaySinh" class="form-label"></label>
+                    <input asp-for="NgaySinh" class="form-control" />
+                    <span asp-validation-for="NgaySinh" class="text-danger"></span>
+                </div>
+                <div class="form-group form-span-2">
+                    <label asp-for="DiaChi" class="form-label"></label>
+                    <input asp-for="DiaChi" class="form-control" autocomplete="street-address" />
+                    <span asp-validation-for="DiaChi" class="text-danger"></span>
+                </div>
+                <div class="form-check form-span-2">
+                    <input asp-for="GioiTinh" class="form-check-input" />
+                    <label asp-for="GioiTinh" class="form-check-label"></label>
+                </div>
+            </div>
+            <button type="submit" class="primary-action account-submit">Hoàn tất đăng ký</button>
+        </form>
+        <p class="account-switch">
+            Đã có tài khoản?
+            <a asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]">Đăng nhập</a>
+        </p>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

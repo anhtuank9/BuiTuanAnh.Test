@@ -1,0 +1,26 @@
+@model IReadOnlyList<AdvertisementViewModel>
+
+<section class="sidebar-card ads-card" aria-label="Banner quảng cáo bên phải">
+    <div class="ad-list">
+        @foreach (var ad in Model)
+        {
+            <a class="ad-item" href="@ad.Link" target="_blank" rel="noopener">
+                <img src="@ad.ImageUrl" alt="@ad.CompanyName" onerror="this.src='/images/QC_BEN.jpg'" />
+                <span>#@ad.Id · @ad.CompanyName</span>
+                @if (ad.StartDate.HasValue || ad.EndDate.HasValue)
+                {
+                    <small>
+                        Hiệu lực:
+                        @(ad.StartDate?.ToString("dd/MM/yyyy") ?? "không giới hạn")
+                        –
+                        @(ad.EndDate?.ToString("dd/MM/yyyy") ?? "không giới hạn")
+                    </small>
+                }
+            </a>
+        }
+        @if (Model.Count == 0)
+        {
+            <p class="empty-note">Chưa có banner quảng cáo còn hiệu lực.</p>
+        }
+    </div>
+</section>

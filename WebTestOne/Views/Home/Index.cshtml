@@ -1,8 +1,38 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Trang chủ";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="welcome-hero">
+    <div>
+        <span class="eyebrow">Book Online</span>
+        <h1>Chọn đúng cuốn sách cho hành trình của bạn</h1>
+        <p>Khám phá sách theo chủ đề, xem thông tin chi tiết và đặt mua trong vài bước đơn giản.</p>
+        <div class="hero-actions">
+            <a class="primary-action" asp-controller="Sach" asp-action="Index">Khám phá danh mục</a>
+            <a class="secondary-action" asp-controller="Account" asp-action="Register">Tạo tài khoản</a>
+        </div>
+    </div>
+    <div class="hero-book-stack" aria-hidden="true">
+        <span>Đọc</span>
+        <span>Hiểu</span>
+        <span>Trưởng thành</span>
+    </div>
+</section>
+
+<section class="home-features" aria-label="Dịch vụ nổi bật">
+    <article>
+        <span class="feature-icon" aria-hidden="true">⌕</span>
+        <h2>Dễ tìm kiếm</h2>
+        <p>Chọn chủ đề bên trái để xem ngay các đầu sách phù hợp.</p>
+    </article>
+    <article>
+        <span class="feature-icon" aria-hidden="true">♡</span>
+        <h2>Thông tin rõ ràng</h2>
+        <p>Tên sách, tác giả, nhà xuất bản và giá bán luôn được trình bày đầy đủ.</p>
+    </article>
+    <article>
+        <span class="feature-icon" aria-hidden="true">✓</span>
+        <h2>Đặt hàng nhanh</h2>
+        <p>Điều chỉnh số lượng, theo dõi tổng tiền và xác nhận đơn ngay trong giỏ hàng.</p>
+    </article>
+</section>
