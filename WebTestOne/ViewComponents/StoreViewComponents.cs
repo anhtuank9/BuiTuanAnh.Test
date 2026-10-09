@@ -115,7 +115,9 @@ public sealed class RandomAdsViewComponent(AppDbContext context) : ViewComponent
     ];
 }
 
-public sealed class ActiveAdsViewComponent(AppDbContext context) : ViewComponent
+public sealed class ActiveAdsViewComponent(
+    AppDbContext context,
+    IWebHostEnvironment environment) : ViewComponent
 {
     public async Task<IViewComponentResult> InvokeAsync()
     {
@@ -129,14 +131,29 @@ public sealed class ActiveAdsViewComponent(AppDbContext context) : ViewComponent
                 .OrderBy(ad => ad.NgayHetHan)
                 .Take(3)
                 .ToListAsync();
-            IReadOnlyList<AdvertisementViewModel> viewModel = ads.Select(ad => new AdvertisementViewModel
+            var usedImages = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            IReadOnlyList<AdvertisementViewModel> viewModel = ads.Select((ad, index) =>
             {
-                Id = ad.Stt,
-                CompanyName = ad.TenCty ?? "Đối tác Book Online",
-                ImageUrl = StoreImage.AdvertisementJpeg(ad.HinhMinhHoa),
-                Link = string.IsNullOrWhiteSpace(ad.Href) ? "#" : ad.Href,
-                StartDate = ad.NgayBatDau,
-                EndDate = ad.NgayHetHan
+                var imageUrl = StoreImage.ExistingAdvertisementJpeg(
+                    ad.HinhMinhHoa,
+                    environment.WebRootPath,
+                    index);
+
+                if (!usedImages.Add(imageUrl))
+                {
+                    imageUrl = StoreImage.DefaultAdvertisementJpeg(index);
+                    usedImages.Add(imageUrl);
+                }
+
+                return new AdvertisementViewModel
+                {
+                    Id = ad.Stt,
+                    CompanyName = ad.TenCty ?? "Đối tác Book Online",
+                    ImageUrl = imageUrl,
+                    Link = string.IsNullOrWhiteSpace(ad.Href) ? "#" : ad.Href,
+                    StartDate = ad.NgayBatDau,
+                    EndDate = ad.NgayHetHan
+                };
             }).ToList();
 
             return View(viewModel.Count > 0 ? viewModel : CreateDefaultAds());

@@ -5,6 +5,19 @@ namespace WebTestOne.Services;
 
 public static class StoreImage
 {
+    private static readonly string[] DefaultAdvertisementJpegs =
+    [
+        "/images/QC_BEN.jpg",
+        "/images/QC_LT.jpg",
+        "/images/QC_CBV.jpg"
+    ];
+
+    private static readonly IReadOnlyDictionary<string, string> AdvertisementGifAliases =
+        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["vinaphone_xmas"] = "QC02.gif"
+        };
+
     private static readonly IReadOnlyDictionary<string, string> AdvertisementJpegAliases =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -38,6 +51,12 @@ public static class StoreImage
             return "/images/QC01.gif";
         }
 
+        var nameWithoutExtension = Path.GetFileNameWithoutExtension(cleanName);
+        if (AdvertisementGifAliases.TryGetValue(nameWithoutExtension, out var alias))
+        {
+            return $"/images/{alias}";
+        }
+
         if (!Path.HasExtension(cleanName))
         {
             cleanName += ".gif";
@@ -58,6 +77,23 @@ public static class StoreImage
             ? $"/images/{alias}"
             : $"/images/{cleanName}.jpg";
     }
+
+    public static string ExistingAdvertisementJpeg(string? fileName, string webRootPath, int fallbackIndex)
+    {
+        var candidate = AdvertisementJpeg(fileName);
+        var relativePath = candidate.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+        var physicalPath = Path.Combine(webRootPath, relativePath);
+
+        if (File.Exists(physicalPath))
+        {
+            return candidate;
+        }
+
+        return DefaultAdvertisementJpeg(fallbackIndex);
+    }
+
+    public static string DefaultAdvertisementJpeg(int index) =>
+        DefaultAdvertisementJpegs[index % DefaultAdvertisementJpegs.Length];
 }
 
 public sealed class CartService(IHttpContextAccessor httpContextAccessor)
