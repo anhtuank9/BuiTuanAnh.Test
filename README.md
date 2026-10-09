@@ -37,23 +37,31 @@ BuiTuanAnh.Test/
 ### 1. Khởi chạy trên máy cục bộ bằng Visual Studio
 
 1. Sao chép mã nguồn về máy:
+
    ```bash
-   git clone [https://github.com/anhtuank9/BuiTuanAnh.Test.git](https://github.com/anhtuank9/BuiTuanAnh.Test.git)
+   git clone https://github.com/anhtuank9/BuiTuanAnh.Test.git
    ```
+
 2. Mở file giải pháp `WebTestOne.slnx` bằng Visual Studio.
 3. Nhấn tổ hợp phím **Ctrl + F5** (hoặc nút Run) để biên dịch và chạy website.
 4. Mở trình duyệt và truy cập đường dẫn:
+
    ```text
    http://localhost:5xxx/Home/NameList
    ```
+
 ### 2. Khởi chạy trực tuyến bằng GitHub Codespaces
 
 1. Mở cửa sổ Terminal trong Codespaces và chuyển vào thư mục dự án:
+
    ```bash
    cd WebTestOne
    ```
+
 2. Chạy lệnh khởi động ứng dụng:
+
    ```bash
    dotnet run
    ```
+
 3. Chọn tab **Ports** (Cổng) ở bảng điều khiển bên dưới, nhấp chuột phải vào cổng đang chạy và đổi **Port Visibility** sang **Public**.
